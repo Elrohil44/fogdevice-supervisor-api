@@ -18,7 +18,7 @@ WORKDIR /app
 COPY ./package.json ./yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-COPY ./src ./
+COPY ./src /app/src
 
 CMD yarn start
 EXPOSE $PORT
