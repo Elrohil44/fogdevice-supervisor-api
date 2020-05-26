@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./src/index.js",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "echo-version": "echo $npm_package_version"
   },
   "dependencies": {
     "bcrypt": "^4.0.1",
