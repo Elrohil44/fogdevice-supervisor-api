@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:12.15-alpine
 
 ENV TERRAFORM_VERSION=0.12.23
 ENV PORT=5001
