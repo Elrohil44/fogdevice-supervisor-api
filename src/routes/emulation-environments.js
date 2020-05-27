@@ -34,20 +34,6 @@ router.get(
 router.post(
   '/',
   passportJwt,
-  // [
-  //   body('name')
-  //     .exists({ checkFalsy: true })
-  //     .isString(),
-  //   oneOf([
-  //     [
-  //       body('emulationType').equals('SOFTWARE'),
-  //       body('pythonCode')
-  //         .exists({ checkFalsy: true })
-  //         .isString(),
-  //     ],
-  //     body('emulationType').equals('HARDWARE'),
-  //   ]),
-  // ],
   throwOnValidationErrors,
   (req, res, next) => EmulationEnvironmentsController
     .create(req)
@@ -59,24 +45,25 @@ router.put(
   '/:_id',
   passportJwt,
   [
-    // body('name')
-    //   .exists({ checkFalsy: true })
-    //   .isString(),
-    // oneOf([
-    //   [
-    //     body('emulationType').equals('SOFTWARE'),
-    //     body('pythonCode')
-    //       .exists({ checkFalsy: true })
-    //       .isString(),
-    //   ],
-    //   body('emulationType').equals('HARDWARE'),
-    // ]),
     param('_id').isMongoId(),
   ],
   throwOnValidationErrors,
   (req, res, next) => EmulationEnvironmentsController
     .update(req)
     .then((result) => res.status(200).json(result))
+    .catch(next),
+);
+
+router.get(
+  '/:_id/start',
+  passportJwt,
+  [
+    param('_id').isMongoId(),
+  ],
+  throwOnValidationErrors,
+  (req, res, next) => EmulationEnvironmentsController
+    .startEmulation(req)
+    .then(() => res.status(204).send())
     .catch(next),
 );
 

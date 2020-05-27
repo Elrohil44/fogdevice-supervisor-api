@@ -8,6 +8,10 @@ const {
   COOKIE_SECRET,
   AUTH_EXPIRATION_TIME,
   AUTH_COOKIE_NAME,
+  EMULATION_CONFIGS_DIR,
+  PYTHON_CODE_REPOSITORY_DIR,
+  TERRFORM_MAIN_FILE,
+  TERRFORM_DIR,
 } = process.env;
 
 module.exports = {
@@ -24,4 +28,8 @@ module.exports = {
     httpOnly: true,
     signed: true,
   },
+  EMULATION_CONFIGS_DIR: EMULATION_CONFIGS_DIR || '/app/emulation-configs',
+  PYTHON_CODE_REPOSITORY_DIR: PYTHON_CODE_REPOSITORY_DIR || '/app/python-code-repository',
+  TERRFORM_MAIN_FILE: TERRFORM_MAIN_FILE || 'main.tf',
+  TERRFORM_DIR: TERRFORM_DIR || '/app/terraform',
 };
