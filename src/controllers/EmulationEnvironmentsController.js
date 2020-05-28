@@ -13,11 +13,10 @@ const {
 } = require('../config');
 
 const EMULATION_ENVIRONMENT_TEMPLATE_STRING = '{{emulation-environment-id}}';
-const EMULATOR_IDS_TEMPLATE_STRING = '{{emulation-environment-id}}';
+const EMULATOR_IDS_TEMPLATE_STRING = '{{emulator-ids}}';
 
 const TERRAFORM_MODULE_TEMPLATE = `
-
-module "${EMULATION_ENVIRONMENT_TEMPLATE_STRING}" {
+module "emulation_env_${EMULATION_ENVIRONMENT_TEMPLATE_STRING}" {
   source = "./modules/emulation-environment"
 
   emulation_environment_id = "${EMULATION_ENVIRONMENT_TEMPLATE_STRING}"
@@ -162,7 +161,7 @@ const startEmulation = async (req) => {
     throw new NotFoundError('Emulation environment not found', 11404);
   }
 
-  await Promise.all(emulationEnvironment.emulators || []).map(async ({ emulator }) => {
+  await Promise.all((emulationEnvironment.emulators || []).map(async ({ emulator }) => {
     const { emulationType, pythonCode, _id: emulatorId } = emulator || {};
     if (emulationType === 'SOFTWARE' && pythonCode) {
       await savePythonCode({
@@ -170,10 +169,17 @@ const startEmulation = async (req) => {
         filename: `${emulationEnvironment._id}_${emulatorId}.py`,
       });
     }
-  });
+  }));
 
   emulationEnvironment.depopulate('emulators.emulator');
+
+  emulationEnvironment.emulators = emulationEnvironment.emulators
+    .map(({ x, y, emulator: { _id: emulator } }) => ({
+      x, y, emulator,
+    }));
+
   const config = emulationEnvironment.toJSON();
+
   await saveFile({
     path: `${EMULATION_CONFIGS_DIR}/${emulationEnvironment._id}.json`,
     content: JSON.stringify(config),
@@ -197,6 +203,31 @@ const startEmulation = async (req) => {
     flags: 'a',
   });
 
+  childProcess.execSync(`perl -0777 -pi -e 's/\\nmodule "emulation_env_${emulationEnvironment._id}" {.*?}\n//s' ${TERRFORM_MAIN_FILE}`, {
+    cwd: TERRFORM_DIR,
+  });
+  childProcess.execSync('terraform init && terraform apply -auto-approve', {
+    cwd: TERRFORM_DIR,
+  });
+};
+
+
+const stopEmulation = async (req) => {
+  const { _id } = req.params;
+  const { _id: user } = req.user;
+
+
+  const emulationEnvironment = await EmulationEnvironment
+    .findOne({ _id, user });
+
+  if (!emulationEnvironment) {
+    throw new NotFoundError('Emulation environment not found', 11404);
+  }
+
+  childProcess.execSync(`perl -0777 -pi -e 's/\\nmodule "emulation_env_${emulationEnvironment._id}" {.*?}\n//s' ${TERRFORM_MAIN_FILE}`, {
+    cwd: TERRFORM_DIR,
+  });
+
   childProcess.execSync('terraform init && terraform apply -auto-approve', {
     cwd: TERRFORM_DIR,
   });
@@ -208,4 +239,5 @@ module.exports = {
   create,
   update,
   startEmulation,
+  stopEmulation,
 };

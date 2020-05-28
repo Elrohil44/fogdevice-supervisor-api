@@ -1,9 +1,9 @@
 FROM node:12.15-alpine
 
-ENV TERRAFORM_VERSION=0.12.23
+ENV TERRAFORM_VERSION=0.12.25
 ENV PORT=5001
 
-RUN apk add --update git bash wget
+RUN apk add --update git bash wget perl
 
 ADD https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip ./
 ADD https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_SHA256SUMS ./

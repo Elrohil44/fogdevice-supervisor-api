@@ -7,6 +7,7 @@ const connect = async () => mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
+    useFindAndModify: false,
   });
 
 module.exports = {

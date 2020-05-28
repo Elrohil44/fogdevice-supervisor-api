@@ -1,8 +1,6 @@
 const { Router } = require('express');
 const {
   param,
-  // body,
-  // oneOf,
 } = require('express-validator');
 
 const { passportJwt, throwOnValidationErrors } = require('../middlewares');
@@ -63,6 +61,19 @@ router.get(
   throwOnValidationErrors,
   (req, res, next) => EmulationEnvironmentsController
     .startEmulation(req)
+    .then(() => res.status(204).send())
+    .catch(next),
+);
+
+router.get(
+  '/:_id/stop',
+  passportJwt,
+  [
+    param('_id').isMongoId(),
+  ],
+  throwOnValidationErrors,
+  (req, res, next) => EmulationEnvironmentsController
+    .stopEmulation(req)
     .then(() => res.status(204).send())
     .catch(next),
 );
