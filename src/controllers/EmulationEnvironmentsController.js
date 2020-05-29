@@ -197,16 +197,20 @@ const startEmulation = async (req) => {
     .replace(new RegExp(EMULATION_ENVIRONMENT_TEMPLATE_STRING, 'g'), emulationEnvironment._id)
     .replace(new RegExp(EMULATOR_IDS_TEMPLATE_STRING, 'g'), emulatorIdsJSON);
 
+  const moduleName = `emulation_env_${emulationEnvironment._id}`;
+
+  childProcess.execSync(`perl -0777 -pi -e 's/\\nmodule "${moduleName}" {.*?}\n//s' ${TERRFORM_MAIN_FILE}`, {
+    cwd: TERRFORM_DIR,
+  });
+
   await saveFile({
     path: `${TERRFORM_DIR}/${TERRFORM_MAIN_FILE}`,
     content: terraformModuleEntry,
     flags: 'a',
   });
 
-  childProcess.execSync(`perl -0777 -pi -e 's/\\nmodule "emulation_env_${emulationEnvironment._id}" {.*?}\n//s' ${TERRFORM_MAIN_FILE}`, {
-    cwd: TERRFORM_DIR,
-  });
-  childProcess.execSync('terraform init && terraform apply -auto-approve', {
+  childProcess.execSync(`terraform init && terraform taint module.${moduleName}\
+.docker_container.fogdevice-environment-emulator && terraform apply -auto-approve`, {
     cwd: TERRFORM_DIR,
   });
 };
