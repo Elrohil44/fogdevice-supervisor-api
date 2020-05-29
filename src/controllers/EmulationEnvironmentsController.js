@@ -209,7 +209,7 @@ const startEmulation = async (req) => {
     flags: 'a',
   });
 
-  childProcess.execSync(`terraform init && terraform taint module.${moduleName}\
+  childProcess.execSync(`terraform init && terraform taint -allow-missing module.${moduleName}\
 .docker_container.fogdevice-environment-emulator && terraform apply -auto-approve`, {
     cwd: TERRFORM_DIR,
   });
