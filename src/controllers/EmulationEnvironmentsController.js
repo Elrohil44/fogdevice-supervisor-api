@@ -79,6 +79,9 @@ const create = async (req) => {
   const { _id: user } = req.user;
   const {
     name,
+    epochDuration,
+    width,
+    height,
     emulators,
     commands,
   } = req.body;
@@ -86,6 +89,9 @@ const create = async (req) => {
   return new EmulationEnvironment({
     user,
     name,
+    epochDuration,
+    width,
+    height,
     emulators,
     commands,
   }).save();
@@ -96,6 +102,10 @@ const update = async (req) => {
   const { _id } = req.params;
 
   const updatableFields = [
+    'name',
+    'epochDuration',
+    'width',
+    'height',
     'name',
     'emulators',
     'commands',
@@ -171,7 +181,11 @@ const startEmulation = async (req) => {
     }
   }));
 
-  emulationEnvironment.depopulate('emulators.emulator');
+  const softwareEmulators = emulationEnvironment.emulators
+    .filter(({ emulationType }) => emulationType === 'SOFTWARE')
+    .map(({ x, y, emulator: { _id: emulator } }) => ({
+      x, y, emulator,
+    }));
 
   emulationEnvironment.emulators = emulationEnvironment.emulators
     .map(({ x, y, emulator: { _id: emulator } }) => ({
@@ -185,7 +199,7 @@ const startEmulation = async (req) => {
     content: JSON.stringify(config),
   });
 
-  const emulatorIds = (emulationEnvironment.emulators || [])
+  const emulatorIds = softwareEmulators
     .map((d) => d.emulator)
     .filter(Boolean)
     .map(String);

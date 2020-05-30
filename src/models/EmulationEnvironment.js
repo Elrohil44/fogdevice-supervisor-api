@@ -6,6 +6,9 @@ const schema = new mongoose.Schema({
     ref: 'User',
   },
   name: String,
+  epochDuration: Number,
+  width: Number,
+  height: Number,
   emulators: [{
     emulator: {
       type: mongoose.Schema.Types.ObjectId,
@@ -13,6 +16,7 @@ const schema = new mongoose.Schema({
     },
     x: Number,
     y: Number,
+    maxUpdateInterval: Number,
   }],
   commands: [{
     trigger: {
