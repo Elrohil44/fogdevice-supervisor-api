@@ -182,7 +182,7 @@ const startEmulation = async (req) => {
   }));
 
   const softwareEmulators = emulationEnvironment.emulators
-    .filter(({ emulationType }) => emulationType === 'SOFTWARE')
+    .filter(({ emulator: { emulationType } }) => emulationType === 'SOFTWARE')
     .map(({ x, y, emulator: { _id: emulator } }) => ({
       x, y, emulator,
     }));
