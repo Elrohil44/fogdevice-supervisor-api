@@ -12,6 +12,7 @@ const {
   PYTHON_CODE_REPOSITORY_DIR,
   TERRFORM_MAIN_FILE,
   TERRFORM_DIR,
+  ALLOW_ORIGIN,
 } = process.env;
 
 module.exports = {
@@ -32,4 +33,5 @@ module.exports = {
   PYTHON_CODE_REPOSITORY_DIR: PYTHON_CODE_REPOSITORY_DIR || '/app/python-code-repository',
   TERRFORM_MAIN_FILE: TERRFORM_MAIN_FILE || 'main.tf',
   TERRFORM_DIR: TERRFORM_DIR || '/app/terraform',
+  ALLOW_ORIGIN: ALLOW_ORIGIN || 'http://localhost:3000',
 };

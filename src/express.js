@@ -10,13 +10,14 @@ const HTTPError = require('./errors/HTTPError');
 
 const {
   COOKIE_SECRET,
+  ALLOW_ORIGIN,
 } = require('./config');
 
 const app = express();
 
 app.use(helmet());
 app.use((req, res, next) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.set('Access-Control-Allow-Origin', ALLOW_ORIGIN);
   res.set('Access-Control-Allow-Headers', 'content-type,authorization');
   res.set('Access-Control-Allow-Credentials', 'true');
   res.set('Access-Control-Allow-Methods', 'GET,POST,PUT');
